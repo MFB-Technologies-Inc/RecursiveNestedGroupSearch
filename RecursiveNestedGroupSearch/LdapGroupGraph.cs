@@ -13,9 +13,8 @@ namespace RecursiveNestedGroupSearch
     public class LdapGroupGraph
     {
         private readonly Dictionary<string, List<string>> _adjacencyList;
-        private readonly Dictionary<string, HashSet<string>> _fullMembershipLookup;
 
-        public LdapGroupGraph(IList<LdapEntry> groupLdapEntries)
+        public LdapGroupGraph(IList<LdapEntry> groupLdapEntries, IList<LdapEntry> userLdapEntries)
         {
             _adjacencyList = new();
             foreach (var group in groupLdapEntries)
@@ -23,26 +22,19 @@ namespace RecursiveNestedGroupSearch
                 var (groupDN, listOfParentGroupDNs) = GetUserOrGroupDnAndMemberOf(group);
                 _adjacencyList.Add(groupDN, listOfParentGroupDNs.ToList());
             }
-
-            //TODO: replace with graph that includes users
-            _fullMembershipLookup = new();
-            foreach (var childGroup in _adjacencyList)
+            foreach (var user in userLdapEntries)
             {
-                var fullGroupList = new HashSet<string>();
-                GetGroupsRecursive(childGroup.Key, ref fullGroupList);
-                _fullMembershipLookup.Add(childGroup.Key, fullGroupList);
+                var (userDN, listOfParentGroupDNs) = GetUserOrGroupDnAndMemberOf(user);
+                _adjacencyList.Add(userDN, listOfParentGroupDNs.ToList());
             }
         }
 
         public IEnumerable<string> RecursiveGroupList(LdapEntry groupOrUser)
         {
-            var (_, startingGroupDNs) = GetUserOrGroupDnAndMemberOf(groupOrUser);
-            var groupUnion = new HashSet<string>(startingGroupDNs);
-            foreach (var groupDN in startingGroupDNs)
-            {
-                groupUnion.UnionWith(_fullMembershipLookup[groupDN]);
-            }
-            return groupUnion;
+            var results = new HashSet<string>();
+            var (userOrGroupDn, _) = GetUserOrGroupDnAndMemberOf(groupOrUser);
+            GetGroupsRecursive(userOrGroupDn, ref results);
+            return results;
         }
 
         private void GetGroupsRecursive(string startingGroupDN, ref HashSet<string> alreadyFound)
