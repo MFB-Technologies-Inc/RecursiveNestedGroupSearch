@@ -33,7 +33,7 @@ namespace RecursiveNestedGroupSearch
 
             var directory = CreateLdapDirectoryFromGraph(graph);
 
-            var groupGraph = new LdapGroupGraph(directory.GroupEntries);
+            var groupGraph = new LdapGroupGraph(directory.GroupEntries, directory.UserEntries);
 
             var user1Entry = directory.UserEntries.Find(entry => entry.DistinguishedName==user1);
 
@@ -72,7 +72,7 @@ namespace RecursiveNestedGroupSearch
 
             var directory = CreateLdapDirectoryFromGraph(graph);
 
-            var groupGraph = new LdapGroupGraph(directory.GroupEntries);
+            var groupGraph = new LdapGroupGraph(directory.GroupEntries, directory.UserEntries);
 
             var user1Entry = directory.UserEntries.Find(entry => entry.DistinguishedName==user1);
 
@@ -111,7 +111,7 @@ namespace RecursiveNestedGroupSearch
 
             var directory = CreateLdapDirectoryFromGraph(graph);
 
-            var groupGraph = new LdapGroupGraph(directory.GroupEntries);
+            var groupGraph = new LdapGroupGraph(directory.GroupEntries, directory.UserEntries);
 
             var user1Entry = directory.UserEntries.Find(entry => entry.DistinguishedName==user1);
 
@@ -150,7 +150,7 @@ namespace RecursiveNestedGroupSearch
 
             var directory = CreateLdapDirectoryFromGraph(graph);
 
-            var groupGraph = new LdapGroupGraph(directory.GroupEntries);
+            var groupGraph = new LdapGroupGraph(directory.GroupEntries, directory.UserEntries);
 
             var user1Entry = directory.UserEntries.Find(entry => entry.DistinguishedName==user1);
 
