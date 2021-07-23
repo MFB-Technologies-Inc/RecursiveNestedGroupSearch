@@ -24,7 +24,7 @@ namespace RecursiveNestedGroupSearch
                 _adjacencyList.Add(groupDN, listOfParentGroupDNs.ToList());
             }
 
-            //TODO: replace with graph that includes users
+            // pre-fetch the full membership list for every group
             _fullMembershipLookup = new();
             foreach (var childGroup in _adjacencyList)
             {
@@ -36,6 +36,8 @@ namespace RecursiveNestedGroupSearch
 
         public IEnumerable<string> RecursiveGroupList(LdapEntry groupOrUser)
         {
+            //grab the full group for each immediate parent (which has been pre-fetched)
+            //and then just take the union to avoid duplicate groups
             var (_, startingGroupDNs) = GetUserOrGroupDnAndMemberOf(groupOrUser);
             var groupUnion = new HashSet<string>(startingGroupDNs);
             foreach (var groupDN in startingGroupDNs)
